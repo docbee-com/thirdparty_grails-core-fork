@@ -35,8 +35,8 @@ class JpaQueryContext implements Cloneable {
     private final AliasRegistry aliasRegistry
     private final JoinTracker joinTracker
     private final ExpressionResolver resolver
-    private final Map<ParameterExpression<?>, Object> parameterValues = new LinkedHashMap<>()
-    private final Map<String, Expression<?>> selectionAliases = new HashMap<>()
+    private final Map<ParameterExpression<?>, Object> parameterValues = [:]
+    private final Map<String, Expression<?>> selectionAliases = [:]
     private JpaQueryContext parent
 
     JpaQueryContext() {

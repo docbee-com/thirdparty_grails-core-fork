@@ -74,7 +74,7 @@ class HibernateQuery extends Query {
     protected static final String ALIAS = '_alias'
     private final Map<String, CriteriaAndAlias> createdAssociationPaths = [:]
     private final List<HibernateAlias> aliases = []
-    private final Set<String> fetchJoinPaths = new LinkedHashSet<>()
+    private final Set<String> fetchJoinPaths = [] as Set
     protected String alias
     protected int aliasCount
     protected Deque<GrailsHibernatePersistentEntity> entityStack = new LinkedList<>()

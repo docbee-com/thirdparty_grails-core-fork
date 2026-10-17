@@ -84,7 +84,7 @@ class JpaProjectionAdapter {
                 subquery.select((Expression) selections.get(0))
             } else if (query instanceof CriteriaQuery) {
                 CriteriaQuery criteriaQuery = (CriteriaQuery) query
-                if (criteriaQuery.resultType.equals(Tuple) && selections.size() > 1) {
+                if (criteriaQuery.resultType == Tuple && selections.size() > 1) {
                     criteriaQuery.select(criteriaBuilder.tuple(selections.toArray(new Selection<?>[0])))
                 } else {
                     criteriaQuery.select((Selection) selections.get(0))

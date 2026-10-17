@@ -103,16 +103,16 @@ record HqlQueryContext(
             boolean isUpdate,
             Class<?> targetClassOverride) {
 
-        Map<String, Object> namedParamsCopy = namedParams != null ? new HashMap<>(namedParams) : new HashMap<>()
+        Map<String, Object> namedParamsCopy = namedParams != null ? new HashMap<>(namedParams) : [:]
 
-        List<Object> positionalParamsCopy = positionalParams != null ? new ArrayList<>(positionalParams) : new ArrayList<>()
+        List<Object> positionalParamsCopy = positionalParams != null ? new ArrayList<>(positionalParams) : []
 
-        Map<String, Object> querySettingsCopy = querySettings != null ? new HashMap<>(querySettings) : new HashMap<>()
+        Map<String, Object> querySettingsCopy = querySettings != null ? new HashMap<>(querySettings) : [:]
 
         Map<String, Object> hintsSource = hints != null ? hints : Collections.emptyMap()
         Map<String, Object> filteredHints = [:]
         for (Map.Entry<String, Object> e : hintsSource.entrySet()) {
-            if (AvailableHints.definedHints.contains(e.key)) {
+            if (e.key in AvailableHints.definedHints) {
                 filteredHints.put(e.key, e.value)
             }
         }

@@ -221,20 +221,20 @@ class HibernateEventListener extends AbstractPersistenceEventListener {
         Class<?> clazz = Hibernate.getClass(entity)
 
         SoftKey<Class<?>> key = new SoftKey<Class<?>>(clazz)
-        ClosureEventListener eventListener = eventListeners.get(key)
+        ClosureEventListener eventListener = eventListeners[key]
         if (eventListener != null) {
             return eventListener
         }
 
-        Boolean shouldTrigger = cachedShouldTrigger.get(key)
+        Boolean shouldTrigger = cachedShouldTrigger[key]
         if (shouldTrigger == null || shouldTrigger) {
             synchronized (cachedShouldTrigger) {
-                eventListener = eventListeners.get(key)
+                eventListener = eventListeners[key]
                 if (eventListener == null) {
                     HibernateDatastore hibernateDatastore = getDatastore()
                     boolean isValidSessionFactory = MultiTenant.isAssignableFrom(clazz) ||
                             factory == null ||
-                            hibernateDatastore.getSessionFactory().equals(factory)
+                            hibernateDatastore.sessionFactory == factory
                     HibernatePersistentEntity persistentEntity = (HibernatePersistentEntity) hibernateDatastore.getMappingContext().getPersistentEntity(clazz.getName())
                     shouldTrigger = (persistentEntity != null && isValidSessionFactory)
                     if (shouldTrigger) {

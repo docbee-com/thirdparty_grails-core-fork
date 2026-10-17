@@ -53,7 +53,7 @@ class IdentityEnumType implements UserType<Object>, ParameterizedType, Serializa
     public static final String ENUM_ID_ACCESSOR = 'getId'
     public static final String PARAM_ENUM_CLASS = 'enumClass'
 
-    private static final Map<Class<? extends Enum<?>>, BidiEnumMap> ENUM_MAPPINGS = new HashMap<>()
+    private static final Map<Class<? extends Enum<?>>, BidiEnumMap> ENUM_MAPPINGS = [:]
 
     protected Class<? extends Enum<?>> enumClass
     protected BidiEnumMap bidiMap
@@ -62,10 +62,10 @@ class IdentityEnumType implements UserType<Object>, ParameterizedType, Serializa
     protected int sqlType
 
     static BidiEnumMap getBidiEnumMap(Class<? extends Enum<?>> cls) {
-        BidiEnumMap m = ENUM_MAPPINGS.get(cls)
+        BidiEnumMap m = ENUM_MAPPINGS[cls]
         if (m == null) {
             synchronized (ENUM_MAPPINGS) {
-                m = ENUM_MAPPINGS.get(cls)
+                m = ENUM_MAPPINGS[cls]
                 if (m == null) {
                     try {
                         m = new BidiEnumMap(cls)
@@ -138,7 +138,7 @@ class IdentityEnumType implements UserType<Object>, ParameterizedType, Serializa
 
     @Override
     boolean equals(Object x, Object y) throws HibernateException {
-        return x == y || (x != null && y != null && x.equals(y))
+        return x == y
     }
 
     @Override

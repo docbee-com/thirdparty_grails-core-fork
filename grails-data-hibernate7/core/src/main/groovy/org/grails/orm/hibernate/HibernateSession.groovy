@@ -316,7 +316,7 @@ class HibernateSession extends AbstractAttributeStoringSession implements QueryA
 
             MutationQuery query = createMutationQuery(session, jpaQueryInfo)
 
-            HqlQueryContext ctx = HqlQueryContext.prepare(criteria.persistentEntity, jpaQueryInfo.query, null, null, null, new HashMap<>(), false, true)
+            HqlQueryContext ctx = HqlQueryContext.prepare(criteria.persistentEntity, jpaQueryInfo.query, null, null, null, [:], false, true)
             MutationHqlQuery hqlQuery = (MutationHqlQuery) HibernateHqlQueryCreator.createHqlQuery((HibernateDatastore) getDatastore(), hibernateTemplate.sessionFactory, criteria.persistentEntity, ctx)
             ApplicationEventPublisher applicationEventPublisher = datastore.applicationEventPublisher
             applicationEventPublisher.publishEvent(new PreQueryEvent(datastore, hqlQuery))
@@ -367,7 +367,7 @@ class HibernateSession extends AbstractAttributeStoringSession implements QueryA
 
             MutationQuery query = createMutationQuery(session, jpaQueryInfo)
 
-            HqlQueryContext ctx = HqlQueryContext.prepare(targetEntity, jpaQueryInfo.query, null, null, null, new HashMap<>(), false, true)
+            HqlQueryContext ctx = HqlQueryContext.prepare(targetEntity, jpaQueryInfo.query, null, null, null, [:], false, true)
             MutationHqlQuery hqlQuery = (MutationHqlQuery) HibernateHqlQueryCreator.createHqlQuery((HibernateDatastore) getDatastore(), hibernateTemplate.sessionFactory, targetEntity, ctx)
             ApplicationEventPublisher applicationEventPublisher = datastore.applicationEventPublisher
             applicationEventPublisher.publishEvent(new PreQueryEvent(datastore, hqlQuery))
@@ -399,7 +399,7 @@ class HibernateSession extends AbstractAttributeStoringSession implements QueryA
 
         return getHibernateTemplate().execute({ Session session ->
             // Query only the distinct, non-null ids; a missing id simply yields no row.
-            Set<Serializable> distinctIds = new LinkedHashSet<>()
+            Set<Serializable> distinctIds = [] as Set
             for (Serializable requestedId : requestedIds) {
                 if (requestedId != null) {
                     distinctIds.add(requestedId)
@@ -419,7 +419,7 @@ class HibernateSession extends AbstractAttributeStoringSession implements QueryA
                     (Map<String, Object>) Map.of('keys', distinctIds),
                     (Collection<Object>) null,
                     (Map<String, Object>) null,
-                    new HashMap<>(),
+                    [:],
                     false,
                     false,
                     type

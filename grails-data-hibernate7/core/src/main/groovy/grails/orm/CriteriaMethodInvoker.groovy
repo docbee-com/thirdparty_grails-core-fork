@@ -150,7 +150,7 @@ class CriteriaMethodInvoker {
                     Object ignoreCaseValue = argMap.get(HibernateQueryArgument.IGNORE_CASE.value())
                     final boolean ignoreCase = !(ignoreCaseValue instanceof Boolean) || (Boolean) ignoreCaseValue
                     DynamicFinder.validateSortProperty(hibernateQuery.getEntity(), sortField)
-                    final Query.Order order = DynamicFinder.ORDER_DESC.equals(direction) ?
+                    final Query.Order order = DynamicFinder.ORDER_DESC == direction ?
                             Query.Order.desc(sortField) :
                             Query.Order.asc(sortField)
                     if (ignoreCase) {

@@ -73,7 +73,7 @@ record HibernateQueryExecutor(
         parameterValues.each { ParameterExpression<?> parameter, Object value ->
             query.setParameter((Parameter<Object>) parameter, value)
         }
-        if (Tuple.equals(jpaCq.resultType)) {
+        if (Tuple == jpaCq.resultType) {
             query.setTupleTransformer({ payload, aliases -> payload })
         }
         if (offset != null && offset > 0) {

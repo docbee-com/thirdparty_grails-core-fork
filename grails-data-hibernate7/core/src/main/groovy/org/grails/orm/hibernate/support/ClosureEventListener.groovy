@@ -266,7 +266,7 @@ class ClosureEventListener
             int index = attributeMapping.getStateArrayPosition()
             PersistentProperty property = persistentEntity.getHibernatePropertyByName(p)
 
-            if (property != null && !GormProperties.VERSION.equals(property.getName())) {
+            if (property != null && GormProperties.VERSION != property.name) {
                 state[index] = reflector.getProperty(entity, property.getName())
             }
         }
