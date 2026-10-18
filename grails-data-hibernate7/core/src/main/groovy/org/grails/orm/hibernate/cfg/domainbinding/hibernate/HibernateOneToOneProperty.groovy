@@ -80,7 +80,7 @@ class HibernateOneToOneProperty extends OneToOneWithMapping<PropertyConfig> impl
      */
     String getHibernateReferencedPropertyName() {
         HibernateOneToOneProperty otherSide = hibernateInverseSide
-        return otherSide != null ? otherSide.name : null
+        return otherSide?.name
     }
 
     /** FK direction: FROM_PARENT when constrained (hasOne on other side), TO_PARENT otherwise. */
@@ -91,7 +91,7 @@ class HibernateOneToOneProperty extends OneToOneWithMapping<PropertyConfig> impl
     /** Resolved fetch mode: uses the configured value or falls back to {@link FetchMode#DEFAULT}. */
     FetchMode getHibernateFetchMode() {
         PropertyConfig config = hibernateMappedForm
-        return (config != null && config.fetchMode != null) ? config.fetchMode : FetchMode.DEFAULT
+        return config?.fetchMode ?: FetchMode.DEFAULT
     }
 
     /**

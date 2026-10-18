@@ -38,15 +38,15 @@ class IndexBinder {
         }
         String indexDef
         if (indexObj instanceof Boolean) {
-            if (!((Boolean) indexObj)) {
+            if (!indexObj) {
                 return
             }
-            indexDef = "${table.name}_${columnName}_idx".toString()
+            indexDef = "${table.name}_${columnName}_idx"
         }
         else {
             String indexStr = indexObj.toString()
             if ('true'.equalsIgnoreCase(indexStr)) {
-                indexDef = "${table.name}_${columnName}_idx".toString()
+                indexDef = "${table.name}_${columnName}_idx"
             }
             else if ('false'.equalsIgnoreCase(indexStr)) {
                 return
@@ -56,7 +56,7 @@ class IndexBinder {
             }
         }
         String[] indices = indexDef.split(',')
-        for (String index : indices) {
+        for (String index in indices) {
             table.getOrCreateIndex(index.trim()).addColumn(column)
         }
     }

@@ -54,18 +54,18 @@ class GrailsNativeGenerator extends NativeGenerator {
 
     GrailsNativeGenerator(GeneratorCreationContext context, JdbcEnvironment jdbcEnvironment) {
         // Picks the delegate for the dialect; for IDENTITY it also calls setIdentity(true) on the column.
-        this.initialize(DEFAULT_ANNOTATION, null, context)
-        this.configure(context, new Properties())
+        initialize(DEFAULT_ANNOTATION, null, context)
+        configure(context, new Properties())
 
         Database database = context.database
-        this.registerExportables(database)
+        registerExportables(database)
 
         def physicalName = database.defaultNamespace.physicalName
-        String catalog = physicalName.catalog() != null ? physicalName.catalog().canonicalName : null
-        String schema = physicalName.schema() != null ? physicalName.schema().canonicalName : null
+        String catalog = physicalName.catalog()?.canonicalName
+        String schema = physicalName.schema()?.canonicalName
         SqlStringGenerationContext sqlContext =
                 SqlStringGenerationContextImpl.fromExplicit(jdbcEnvironment, database, catalog, schema)
-        this.initialize(sqlContext)
+        initialize(sqlContext)
     }
 
     @Override
@@ -79,7 +79,7 @@ class GrailsNativeGenerator extends NativeGenerator {
         // 2. Fix the Hibernate 7 ClassCastException
         // NativeGenerator.generate() tries to cast the delegate to BeforeExecutionGenerator.
         // If the dialect chose IDENTITY, that cast fails. We bypass it by returning null.
-        if (this.generationType == GenerationType.IDENTITY) {
+        if (generationType == GenerationType.IDENTITY) {
             return null
         }
 

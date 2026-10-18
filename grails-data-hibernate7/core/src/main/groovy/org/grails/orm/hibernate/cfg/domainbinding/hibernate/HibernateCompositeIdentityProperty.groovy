@@ -28,7 +28,7 @@ import java.beans.PropertyDescriptor
 @CompileStatic
 class HibernateCompositeIdentityProperty extends HibernateIdentityProperty {
 
-    private final HibernatePersistentProperty[] parts
+    final HibernatePersistentProperty[] parts
 
     HibernateCompositeIdentityProperty(PersistentEntity entity, MappingContext context, PropertyDescriptor property) {
         super(entity, context, property)
@@ -44,10 +44,6 @@ class HibernateCompositeIdentityProperty extends HibernateIdentityProperty {
             HibernatePersistentProperty[] parts) {
         super(entity, context, name, type)
         this.parts = parts != null ? parts : new HibernatePersistentProperty[0]
-    }
-
-    HibernatePersistentProperty[] getParts() {
-        return parts
     }
 
 }

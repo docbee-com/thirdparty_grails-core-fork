@@ -112,7 +112,7 @@ class HibernatePersistentEntity extends AbstractPersistentEntity<Mapping> implem
 
     @Override
     boolean forGrailsDomainMapping(String dataSourceName) {
-        return !isAnnotatedEntity() && usesConnectionSource(dataSourceName) && isRoot()
+        return !annotatedEntity && usesConnectionSource(dataSourceName) && root
     }
 
     @Override
@@ -138,7 +138,7 @@ class HibernatePersistentEntity extends AbstractPersistentEntity<Mapping> implem
         if (hibernateIdentity instanceof HibernateSimpleIdentity) {
             HibernateSimpleIdentity simpleIdentity = (HibernateSimpleIdentity) hibernateIdentity
             Mapping result = hibernateMappedForm
-            boolean useSequence = result != null && result.isTablePerConcreteClass()
+            boolean useSequence = result?.isTablePerConcreteClass() ?: false
             return simpleIdentity.determineGeneratorName(useSequence)
         }
         throw new MappingException('Simple Identity expected')

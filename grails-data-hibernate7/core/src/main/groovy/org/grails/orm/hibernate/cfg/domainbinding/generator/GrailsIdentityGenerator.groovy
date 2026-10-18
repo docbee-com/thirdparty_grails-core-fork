@@ -32,7 +32,7 @@ class GrailsIdentityGenerator extends IdentityGenerator {
     GrailsIdentityGenerator(GeneratorCreationContext context, HibernateSimpleIdentity mappedId) {
         Properties generatorProps = mappedId?.properties ?: new Properties()
         super.configure(context, generatorProps)
-        context.property.value.columns.get(0).identity = true
+        context.property.value.columns[0].identity = true
     }
 
 }

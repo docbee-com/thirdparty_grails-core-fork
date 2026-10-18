@@ -63,7 +63,7 @@ class TraitPropertyAccessStrategy implements PropertyAccessStrategy {
                     ReflectionUtils.findMethod(containerJavaType, NameUtils.getGetterName(propertyName, true))
             if (booleanReadMethod != null &&
                     (booleanReadMethod.returnType == Boolean ||
-                            booleanReadMethod.returnType == boolean.class)) {
+                            booleanReadMethod.returnType == boolean)) {
                 readMethod = booleanReadMethod
             }
         }
