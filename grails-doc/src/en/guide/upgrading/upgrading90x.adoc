@@ -474,13 +474,13 @@ The mapping can, though:
 * Native binding refuses a mapping only when the classic binding could not use it either: the classic binding failed to start with it, or booted it and failed on the first row.
   The refusal is an `UnsupportedOperationException` at startup that says what the classic binding did.
   The manual chapter lists them.
-  The one exception is an embedded object as a part of a composite identifier, which the classic binding booted and native binding refuses with a message that points at a workaround that keeps the schema, see <<native-binding-embedded-id,2.5>>.
+  The one exception is an embedded object as a part of a composite identifier, which the classic binding booted and native binding refuses with a message that points at a workaround that keeps the schema, see <<native-binding-embedded-id,5.5>>.
 * The generated schema differs from the one of the classic binding in a few documented cases, for example a `check (idx >= 0)` constraint on the index column of every list, and the column types of foreign keys to nested composite identifiers.
 * A few defects of the classic binding are not copied, such as a custom collection type on a `hasMany` being ignored.
 * A `hasMany` inside a class listed in `static embedded` that more than one embedded property embeds gets a collection table of its own for every owner.
   The classic binding shared one table whose foreign key pointed at only one owner, so the collection of any other owner could not be stored, and it did not start when the properties had the same name.
   The first owner (by entity name, then property path) keeps the table and the key column it has today, the others get names that start with their table and the path of the embedded property.
-* A custom collection type on a `hasMany` now takes effect, see <<native-binding-custom-collection-type,2.4>>.
+* A custom collection type on a `hasMany` now takes effect, see <<native-binding-custom-collection-type,5.4>>.
 * A `createTable` change set written by `dbm-generate-gorm-changelog` or `dbm-gorm-diff` lists the columns in a different order: the identifier, then the columns in the order of the property names, then the foreign keys.
   A diff against an existing database does not report this, because Liquibase does not compare column order.
 
