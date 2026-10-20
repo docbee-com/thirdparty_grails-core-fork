@@ -63,6 +63,12 @@ class SqlTailRecordSpec extends Specification {
         parsed == record
     }
 
+    void "an empty field reads back as null, as a dash does"() {
+        expect:
+        SqlTailRecord.parse('5\t\t-\tthread:main\t\tselect 1') ==
+                new SqlTailRecord(timestamp: 5L, page: 'thread:main', sql: 'select 1')
+    }
+
     void "a line that is not a record parses as null"() {
         expect:
         SqlTailRecord.parse(line) == null

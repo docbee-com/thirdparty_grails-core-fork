@@ -55,13 +55,8 @@ class SqlTailRequestAttribution {
     /** The request attribute Grails sets the action name in. */
     public static final String ACTION_NAME_ATTRIBUTE = 'org.grails.ACTION_NAME_ATTRIBUTE'
 
-    private static final String REQUEST_ID_PREFIX = 'r'
-
     private static final boolean SPRING_WEB_PRESENT = ClassUtils.isPresent(
             'org.springframework.web.context.request.RequestContextHolder', SqlTailRequestAttribution.classLoader)
-
-    private static final boolean SERVLET_PRESENT = SPRING_WEB_PRESENT && ClassUtils.isPresent(
-            'jakarta.servlet.http.HttpServletRequest', SqlTailRequestAttribution.classLoader)
 
     private final AtomicLong requestCounter = new AtomicLong()
 
@@ -72,61 +67,77 @@ class SqlTailRequestAttribution {
      * @return the same record
      */
     SqlTailRecord attribute(SqlTailRecord record) {
-        RequestAttributes attributes = SPRING_WEB_PRESENT ? WebRequestLookup.current() : null
-        if (attributes == null) {
-            record.requestId = null
-            record.request = null
-            record.page = SqlTailRecord.THREAD_PAGE_PREFIX + Thread.currentThread().name
+        if (SPRING_WEB_PRESENT && WebRequestLookup.attribute(record, requestCounter)) {
             return record
         }
-        record.requestId = requestId(attributes)
-        record.page = page(attributes)
-        record.request = SERVLET_PRESENT ? WebRequestLookup.describe(attributes) : null
+        record.requestId = null
+        record.request = null
+        record.page = SqlTailRecord.THREAD_PAGE_PREFIX + Thread.currentThread().name
         record
     }
 
-    private String requestId(RequestAttributes attributes) {
-        synchronized (attributes) {
-            Object existing = attributes.getAttribute(REQUEST_ID_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST)
-            if (existing != null) {
-                return existing.toString()
-            }
-            String id = REQUEST_ID_PREFIX + requestCounter.incrementAndGet()
-            attributes.setAttribute(REQUEST_ID_ATTRIBUTE, id, RequestAttributes.SCOPE_REQUEST)
-            return id
-        }
-    }
-
-    private static String page(RequestAttributes attributes) {
-        Object controller = attributes.getAttribute(CONTROLLER_NAME_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST)
-        if (controller == null) {
-            return null
-        }
-        Object namespace = attributes.getAttribute(CONTROLLER_NAMESPACE_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST)
-        Object action = attributes.getAttribute(ACTION_NAME_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST)
-        StringBuilder page = new StringBuilder()
-        if (namespace != null) {
-            page.append(namespace).append(':')
-        }
-        page.append(controller)
-        if (action != null) {
-            page.append('/').append(action)
-        }
-        page.toString()
-    }
-
     /**
-     * Keeps every reference to Spring Web in a class that is only loaded once Spring Web is known
-     * to be present.
+     * Keeps every reference to Spring Web, in a signature as well as in a body, in a class that is only
+     * loaded once Spring Web is known to be present. The outer class can then be loaded, and reflected
+     * on, without Spring Web on the classpath.
      */
     @CompileStatic
     private static class WebRequestLookup {
 
-        static RequestAttributes current() {
-            RequestContextHolder.getRequestAttributes()
+        private static final String REQUEST_ID_PREFIX = 'r'
+
+        private static final boolean SERVLET_PRESENT = ClassUtils.isPresent(
+                'jakarta.servlet.http.HttpServletRequest', WebRequestLookup.classLoader)
+
+        /**
+         * Fills in a record from the request on the current thread.
+         *
+         * @param record the record to fill in
+         * @param requestCounter the counter the next request id is taken from
+         * @return whether there is a request on the current thread
+         */
+        static boolean attribute(SqlTailRecord record, AtomicLong requestCounter) {
+            RequestAttributes attributes = RequestContextHolder.getRequestAttributes()
+            if (attributes == null) {
+                return false
+            }
+            record.requestId = requestId(attributes, requestCounter)
+            record.page = page(attributes)
+            record.request = SERVLET_PRESENT ? describe(attributes) : null
+            true
         }
 
-        static String describe(RequestAttributes attributes) {
+        private static String requestId(RequestAttributes attributes, AtomicLong requestCounter) {
+            synchronized (attributes) {
+                Object existing = attributes.getAttribute(REQUEST_ID_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST)
+                if (existing != null) {
+                    return existing.toString()
+                }
+                String id = REQUEST_ID_PREFIX + requestCounter.incrementAndGet()
+                attributes.setAttribute(REQUEST_ID_ATTRIBUTE, id, RequestAttributes.SCOPE_REQUEST)
+                return id
+            }
+        }
+
+        private static String page(RequestAttributes attributes) {
+            Object controller = attributes.getAttribute(CONTROLLER_NAME_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST)
+            if (controller == null) {
+                return null
+            }
+            Object namespace = attributes.getAttribute(CONTROLLER_NAMESPACE_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST)
+            Object action = attributes.getAttribute(ACTION_NAME_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST)
+            StringBuilder page = new StringBuilder()
+            if (namespace != null) {
+                page.append(namespace).append(':')
+            }
+            page.append(controller)
+            if (action != null) {
+                page.append('/').append(action)
+            }
+            page.toString()
+        }
+
+        private static String describe(RequestAttributes attributes) {
             if (!(attributes instanceof ServletRequestAttributes)) {
                 return null
             }

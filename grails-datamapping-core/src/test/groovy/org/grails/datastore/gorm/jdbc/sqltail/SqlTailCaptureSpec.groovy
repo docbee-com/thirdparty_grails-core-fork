@@ -21,6 +21,7 @@ package org.grails.datastore.gorm.jdbc.sqltail
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
+import spock.lang.Requires
 import spock.lang.Specification
 import spock.lang.TempDir
 
@@ -149,6 +150,19 @@ class SqlTailCaptureSpec extends Specification {
         then:
         UncheckedIOException e = thrown()
         e.message.contains('sql-tail')
+    }
+
+    @Requires({ new File('/dev/full').canWrite() })
+    void "a write that fails ends the capture rather than failing the statement"() {
+        given: 'a capture on the device every write to fails with "no space left on device"'
+        SqlTailCapture capture = open(new File('/dev/full'))
+
+        when:
+        capture.record('DEFAULT', 'select 1')
+        capture.record('DEFAULT', 'select 2')
+
+        then: 'neither statement fails, and the first failure closed the capture'
+        !capture.open
     }
 
     private SqlTailCapture open(File file) {
