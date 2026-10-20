@@ -152,6 +152,22 @@ class SqlTailCaptureSpec extends Specification {
         e.message.contains('sql-tail')
     }
 
+    void "opening a capture creates a directory that does not exist yet"() {
+        given:
+        File file = new File(tempDir, 'not/yet/there/capture.log')
+
+        expect:
+        !file.parentFile.exists()
+
+        when:
+        SqlTailCapture capture = open(file)
+
+        then:
+        file.parentFile.isDirectory()
+        file.exists()
+        capture.open
+    }
+
     @Requires({ new File('/dev/full').canWrite() })
     void "a write that fails ends the capture rather than failing the statement"() {
         given: 'a capture on the device every write to fails with "no space left on device"'
